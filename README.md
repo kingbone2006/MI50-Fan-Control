@@ -7,20 +7,20 @@
 
 ---
 
-[![GitHub Release](https://img.shields.io/github/v/release/USER_PLACEHOLDER/REPO_PLACEHOLDER?style=for-the-badge&color=0078d4&logo=github)](https://github.com/USER_PLACEHOLDER/REPO_PLACEHOLDER/releases/latest)
-[![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011%20(64--bit)-0078d4?style=for-the-badge&logo=windows)](https://github.com/USER_PLACEHOLDER/REPO_PLACEHOLDER)
+[![GitHub Release](https://img.shields.io/github/v/release/kingbone2006/MI50-Fan-Control?style=for-the-badge&color=0078d4&logo=github)](https://github.com/kingbone2006/MI50-Fan-Control/releases/latest)
+[![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011%20(64--bit)-0078d4?style=for-the-badge&logo=windows)](https://github.com/kingbone2006/MI50-Fan-Control)
 [![.NET](https://img.shields.io/badge/.NET-8.0%20WPF-512bd4?style=for-the-badge&logo=dotnet)](https://dotnet.microsoft.com/download/dotnet/8.0)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
-[![Visitor Count](https://komarev.com/ghpvc/?username=USER_PLACEHOLDER&repo=REPO_PLACEHOLDER&color=0078d4&style=for-the-badge&label=REPO+VIEWS)](https://github.com/USER_PLACEHOLDER/REPO_PLACEHOLDER)
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FUSER_PLACEHOLDER%2FREPO_PLACEHOLDER&count_bg=%230078D4&title_bg=%2324292E&icon=&icon_color=%23E7E7E7&title=Views&edge_flat=false)](https://hits.seeyoufarm.com)
+[![Visitor Count](https://komarev.com/ghpvc/?username=kingbone2006&repo=MI50-Fan-Control&color=0078d4&style=for-the-badge&label=REPO+VIEWS)](https://github.com/kingbone2006/MI50-Fan-Control)
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fkingbone2006%2FMI50-Fan-Control&count_bg=%230078D4&title_bg=%2324292E&icon=&icon_color=%23E7E7E7&title=Views&edge_flat=false)](https://hits.seeyoufarm.com)
 
 <br/>
 
-### 🚀 TẢI XUỐNG / DOWNLOAD
+### 🚀 TẢI XUỐNG BỘ CÀI ĐẶT / DOWNLOAD INSTALLER
 
-[![Direct Download](https://img.shields.io/badge/TẢI_XUỐNG_NGAY_(DIRECT_DOWNLOAD)-MI50FanControl__Setup.exe-brightgreen?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/USER_PLACEHOLDER/REPO_PLACEHOLDER/releases/latest/download/MI50FanControl_Setup.exe)
+[![Direct Download](https://img.shields.io/badge/TẢI_XUỐNG_NGAY_(DIRECT_DOWNLOAD)-MI50FanControl__Setup.exe-brightgreen?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/kingbone2006/MI50-Fan-Control/releases/latest/download/MI50FanControl_Setup.exe)
 
-[📦 **Xem tất cả bản phát hành (All Releases)**](https://github.com/USER_PLACEHOLDER/REPO_PLACEHOLDER/releases)
+[📦 **Xem tất cả bản phát hành (All Releases)**](https://github.com/kingbone2006/MI50-Fan-Control/releases)
 
 ---
 
@@ -33,7 +33,7 @@
 # 🇻🇳 Tiếng Việt
 
 ## 📖 Giới thiệu
-**MI50 Fan Control** là phần mềm điều khiển tốc độ quạt gắn ngoài dành riêng cho card đồ họa **AMD Radeon Instinct MI50** (đặc biệt là các bản mod BIOS **Radeon PRO VII 16GB**).
+**MI50 Fan Control** là phần mềm điều khiển tốc độ quạt gắn ngoài chuyên dụng dành cho card đồ họa **AMD Radeon Instinct MI50** (đặc biệt là các bản mod BIOS **Radeon PRO VII 16GB**).
 
 Phần mềm hoạt động **hoàn toàn độc lập (100% Standalone Native Ring0)**, tự động giao tiếp trực tiếp với chip điều khiển I/O trên bo mạch chủ thông qua Kernel Driver và đọc trực tiếp dữ liệu cảm biến từ driver AMD ADL. **Không phụ thuộc vào SpeedFan hay bất kỳ phần mềm bên thứ ba nào.**
 
@@ -78,7 +78,7 @@ Phần mềm hoạt động **hoàn toàn độc lập (100% Standalone Native R
 ## 💻 Yêu cầu hệ thống
 * **Hệ điều hành:** Windows 10 / Windows 11 (64-bit).
 * **Quyền thực thi:** Chạy dưới quyền Quản trị viên (**Administrator**) để nạp Ring0 Kernel Driver điều khiển quạt phần cứng.
-* **Môi trường chạy:** .NET 8.0 Desktop Runtime x64 (Bộ cài đặt đã tích hợp sẵn hoặc tự động thông báo nếu thiếu).
+* **Môi trường chạy:** .NET 8.0 Desktop Runtime x64.
 * **Phần cứng tương thích:** AMD Radeon Instinct MI50 / Radeon PRO VII / Radeon VII / Vega 20.
 
 ---
@@ -86,7 +86,7 @@ Phần mềm hoạt động **hoàn toàn độc lập (100% Standalone Native R
 ## 📥 Cài đặt & Hướng dẫn sử dụng
 
 ### Cài đặt nhanh
-1. Tải bộ cài đặt: [**MI50FanControl_Setup.exe**](https://github.com/USER_PLACEHOLDER/REPO_PLACEHOLDER/releases/latest/download/MI50FanControl_Setup.exe)
+1. Tải bộ cài đặt trực tiếp: [**MI50FanControl_Setup.exe**](https://github.com/kingbone2006/MI50-Fan-Control/releases/latest/download/MI50FanControl_Setup.exe)
 2. Chạy file MI50FanControl_Setup.exe với quyền Administrator và bấm **Cài đặt**.
 3. Ứng dụng sẽ tự động được khởi tạo trên Desktop và Start Menu.
 
@@ -106,8 +106,8 @@ Yêu cầu: Đã cài đặt [.NET 8.0 SDK](https://dotnet.microsoft.com/downloa
 
 `powershell
 # 1. Clone repository
-git clone https://github.com/USER_PLACEHOLDER/REPO_PLACEHOLDER.git
-cd REPO_PLACEHOLDER
+git clone https://github.com/kingbone2006/MI50-Fan-Control.git
+cd MI50-Fan-Control
 
 # 2. Build và Publish ứng dụng chính
 dotnet publish src/MI50FanControl/MI50FanControl.csproj -c Release -r win-x64 --self-contained false -o publish
@@ -179,7 +179,7 @@ The application operates as a **100% Standalone Native Ring0 Controller**, commu
 ## 📥 Download & Installation
 
 ### Quick Install
-1. Download installer: [**MI50FanControl_Setup.exe**](https://github.com/USER_PLACEHOLDER/REPO_PLACEHOLDER/releases/latest/download/MI50FanControl_Setup.exe)
+1. Download installer: [**MI50FanControl_Setup.exe**](https://github.com/kingbone2006/MI50-Fan-Control/releases/latest/download/MI50FanControl_Setup.exe)
 2. Run MI50FanControl_Setup.exe with Administrator rights and click **Install**.
 3. Launch MI50 Fan Control from your Desktop or Start Menu.
 
@@ -191,8 +191,8 @@ Prerequisites: [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0).
 
 `powershell
 # 1. Clone the repository
-git clone https://github.com/USER_PLACEHOLDER/REPO_PLACEHOLDER.git
-cd REPO_PLACEHOLDER
+git clone https://github.com/kingbone2006/MI50-Fan-Control.git
+cd MI50-Fan-Control
 
 # 2. Publish main application
 dotnet publish src/MI50FanControl/MI50FanControl.csproj -c Release -r win-x64 --self-contained false -o publish

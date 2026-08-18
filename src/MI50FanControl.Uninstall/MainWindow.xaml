@@ -1,0 +1,73 @@
+<Window x:Class="MI50FanControl.Uninstall.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Gỡ Cài Đặt MI50 Fan Control / Uninstaller" 
+        Height="360" Width="520"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="#0D1117"
+        Foreground="#F0F6FC"
+        FontFamily="Segoe UI Variable Display, Segoe UI, sans-serif"
+        Icon="app.ico">
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,16">
+            <Border Width="48" Height="48" CornerRadius="24" Background="#161B22" Margin="0,0,16,0" VerticalAlignment="Center">
+                <TextBlock Text="🗑️" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Gỡ Cài Đặt MI50 Fan Control" FontWeight="Bold" FontSize="16" Foreground="#F0F6FC"/>
+                <TextBlock Text="AMD MI50 / Radeon PRO VII Fan Controller Uninstaller" FontSize="12" Foreground="#8B949E"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Body Content -->
+        <Border Grid.Row="1" Background="#161B22" BorderBrush="#30363D" BorderThickness="1" CornerRadius="8" Padding="16">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock x:Name="StatusTitleText" Text="Bạn có chắc chắn muốn gỡ cài đặt MI50 Fan Control?" FontWeight="SemiBold" FontSize="14" Foreground="#F0F6FC" Margin="0,0,0,8" TextWrapping="Wrap"/>
+                <TextBlock x:Name="StatusDescText" Text="Thao tác này sẽ tắt toàn bộ tiến trình, xóa sạch các shortcut trên Desktop, Start Menu và toàn bộ file ứng dụng khỏi máy tính của bạn." FontSize="12" Foreground="#8B949E" TextWrapping="Wrap" Margin="0,0,0,16"/>
+                <ProgressBar x:Name="UninstallProgressBar" Height="6" Minimum="0" Maximum="100" IsIndeterminate="True" Visibility="Collapsed" Foreground="#EF4444" Background="#30363D"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Action Buttons -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <Button x:Name="CancelBtn" Content="Hủy Bỏ (Cancel)" Click="CancelBtn_Click" 
+                    Background="#21262D" Foreground="#F0F6FC" BorderBrush="#30363D" BorderThickness="1" Padding="16,8" Cursor="Hand" Margin="0,0,10,0">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="6"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            
+            <Button x:Name="UninstallBtn" Content="Gỡ Cài Đặt (Uninstall)" Click="UninstallBtn_Click" 
+                    Background="#DC2626" Foreground="#FFFFFF" FontWeight="Bold" BorderThickness="0" Padding="16,8" Cursor="Hand">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="6"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+
+            <Button x:Name="CloseBtn" Content="Đóng (Close)" Click="CloseBtn_Click" Visibility="Collapsed"
+                    Background="#00D2FF" Foreground="#0D1117" FontWeight="Bold" BorderThickness="0" Padding="20,8" Cursor="Hand">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="6"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

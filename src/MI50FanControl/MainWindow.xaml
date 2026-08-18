@@ -1,0 +1,188 @@
+<Window x:Class="MI50FanControl.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:MI50FanControl.ViewModels"
+        xmlns:views="clr-namespace:MI50FanControl.Views"
+        xmlns:loc="clr-namespace:MI50FanControl.Converters"
+        mc:Ignorable="d"
+        Title="AMD MI50 / Radeon PRO VII Fan Controller" 
+        Height="740" Width="1100"
+        MinHeight="620" MinWidth="920"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BgDarkBrush}"
+        FontFamily="{StaticResource MainFont}"
+        Icon="Assets/app.ico">
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+            <views:DashboardView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:CurveEditorViewModel}">
+            <views:CurveEditorView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:FanManagerViewModel}">
+            <views:FanManagerView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+            <views:SettingsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:DevLogViewModel}">
+            <views:DevLogView />
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="64"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="32"/>
+        </Grid.RowDefinitions>
+
+        <!-- HEADER BAR -->
+        <Border Grid.Row="0" Background="{StaticResource SurfaceDarkBrush}" BorderBrush="{StaticResource BorderDarkBrush}" BorderThickness="0,0,0,1" Padding="20,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Brand Logo & Title -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Source="Assets/app.ico" Width="36" Height="36" Margin="0,0,14,0"/>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{loc:Loc AppTitle}" FontWeight="Bold" FontSize="16" Foreground="{StaticResource TextPrimaryBrush}"/>
+                        <TextBlock Text="{loc:Loc Subtitle}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Live Quick Badge Summary -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Quick Dev Logs Button in Header -->
+                    <Button Command="{Binding NavigateDevLogsCommand}" Style="{StaticResource SecondaryButton}" Padding="10,6" Margin="0,0,12,0" Cursor="Hand">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🛠️ " FontSize="12"/>
+                            <TextBlock Text="{loc:Loc NavDevLogs}" FontSize="12" Foreground="{StaticResource AccentCyanBrush}"/>
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Live GPU Temp Pill -->
+                    <Border Background="#121418" BorderBrush="{StaticResource BorderDarkBrush}" BorderThickness="1" CornerRadius="16" Padding="12,6" Margin="0,0,10,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🌡️ GPU: " Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"/>
+                            <TextBlock Text="{Binding DashboardVM.GpuTemperatureText}" FontWeight="Bold" Foreground="{Binding DashboardVM.GpuTemperature, Converter={StaticResource TempToBrush}}" FontSize="13"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Active Fans Pill -->
+                    <Border Background="#121418" BorderBrush="{StaticResource BorderDarkBrush}" BorderThickness="1" CornerRadius="16" Padding="12,6">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🌀 " FontSize="12"/>
+                            <TextBlock Text="{Binding DashboardVM.ActiveFans.Count}" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" FontSize="13"/>
+                            <TextBlock Text="{loc:Loc FanUnit}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="3,0,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- MAIN BODY (Sidebar Navigation + Content) -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- SIDEBAR NAVIGATION -->
+            <Border Grid.Column="0" Background="{StaticResource SurfaceDarkBrush}" BorderBrush="{StaticResource BorderDarkBrush}" BorderThickness="0,0,1,0" Padding="12,16">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0">
+                        <!-- Nav 1: Dashboard -->
+                        <Button Command="{Binding NavigateDashboardCommand}" Margin="0,0,0,6" Style="{StaticResource SecondaryButton}" HorizontalContentAlignment="Left" Padding="12,10">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="📊 " FontSize="15" Margin="0,0,10,0"/>
+                                <TextBlock Text="{loc:Loc NavDashboard}" FontWeight="SemiBold" FontSize="13"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Nav 2: Fan Curves -->
+                        <Button Command="{Binding NavigateCurvesCommand}" Margin="0,0,0,6" Style="{StaticResource SecondaryButton}" HorizontalContentAlignment="Left" Padding="12,10">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="📈 " FontSize="15" Margin="0,0,10,0"/>
+                                <TextBlock Text="{loc:Loc NavCurves}" FontWeight="SemiBold" FontSize="13"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Nav 3: Fan Manager -->
+                        <Button Command="{Binding NavigateFanManagerCommand}" Margin="0,0,0,6" Style="{StaticResource SecondaryButton}" HorizontalContentAlignment="Left" Padding="12,10">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🌀 " FontSize="15" Margin="0,0,10,0"/>
+                                <TextBlock Text="{loc:Loc NavFanManager}" FontWeight="SemiBold" FontSize="13"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Nav 4: Settings & Hardware -->
+                        <Button Command="{Binding NavigateSettingsCommand}" Margin="0,0,0,6" Style="{StaticResource SecondaryButton}" HorizontalContentAlignment="Left" Padding="12,10">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="⚙️ " FontSize="15" Margin="0,0,10,0"/>
+                                <TextBlock Text="{loc:Loc NavSettings}" FontWeight="SemiBold" FontSize="13"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Nav 5: Dev Logs / Gỡ Lỗi at bottom of sidebar -->
+                    <Button Grid.Row="1" Command="{Binding NavigateDevLogsCommand}" Style="{StaticResource SecondaryButton}" HorizontalContentAlignment="Left" Padding="12,10" Background="#161B22" BorderBrush="#30363D">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🛠️ " FontSize="15" Margin="0,0,10,0"/>
+                            <TextBlock Text="{loc:Loc NavDevLogs}" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource AccentCyanBrush}"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- DYNAMIC VIEW CONTENT -->
+            <ContentControl Grid.Column="1" Content="{Binding CurrentView}" />
+        </Grid>
+
+        <!-- FOOTER STATUS BAR -->
+        <Border Grid.Row="2" Background="{StaticResource SurfaceDarkBrush}" BorderBrush="{StaticResource BorderDarkBrush}" BorderThickness="0,1,0,0" Padding="16,0">
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Ellipse Width="8" Height="8" Fill="#10B981" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <TextBlock Text="{loc:Loc StatusMonitoring}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <TextBlock Grid.Column="2" VerticalAlignment="Center" Cursor="Hand">
+                    <Hyperlink NavigateUri="https://github.com/kingbone2006" RequestNavigate="Hyperlink_RequestNavigate" TextDecorations="None">
+                        <Run Text="Made with " Foreground="#8B949E" FontSize="11"/>
+                        <Run Text="❤️" Foreground="#EF4444" FontSize="11"/>
+                        <Run Text=" by kingbone2006" Foreground="#58A6FF" FontWeight="SemiBold" FontSize="11"/>
+                    </Hyperlink>
+                </TextBlock>
+            </Grid>
+        </Border>
+
+        <!-- STARTUP HARDWARE LOADING OVERLAY -->
+        <Border Grid.RowSpan="3" Background="#EE0D1117" Panel.ZIndex="999"
+                Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar IsIndeterminate="True" Width="280" Height="5" Background="#21262D" Foreground="{StaticResource AccentCyanBrush}" Margin="0,0,0,24"/>
+                <TextBlock Text="{loc:Loc LoadingHardware}" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" HorizontalAlignment="Center"/>
+                <TextBlock Text="{loc:Loc ConnectingEngine}" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

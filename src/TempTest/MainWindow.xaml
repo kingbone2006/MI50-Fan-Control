@@ -1,0 +1,105 @@
+<Window x:Class="TempTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="AMD GPU Full Sensor &amp; Temperature Diagnostic Test" 
+        Height="720" Width="1000"
+        WindowStartupLocation="CenterScreen"
+        Background="#0D1117" Foreground="#F0F6FC">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#161B22" CornerRadius="8" Padding="16" Margin="0,0,0,15" BorderBrush="#30363D" BorderThickness="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="🔥 AMD GPU Full Sensor &amp; Temperature Inspector" FontSize="20" FontWeight="Bold" Foreground="#38BDF8"/>
+                    <TextBlock x:Name="GpuNameText" Text="Đang kết nối driver AMD..." FontSize="13" Foreground="#8B949E" Margin="0,4,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Background="#238636" CornerRadius="12" Padding="10,4" Margin="0,0,10,0">
+                        <TextBlock Text="LIVE 300ms" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                    </Border>
+                    <Button Content="Reset Min/Max" Click="ResetMinMax_Click" Background="#21262D" Foreground="#F0F6FC" BorderBrush="#30363D" Padding="10,6" Cursor="Hand"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Filter bar -->
+        <Grid Grid.Row="1" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="SearchBox" Grid.Column="0" TextChanged="SearchBox_TextChanged" Background="#161B22" Foreground="#F0F6FC" BorderBrush="#30363D" Padding="10,6" FontSize="13" VerticalContentAlignment="Center"/>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0,0,0">
+                <RadioButton Content="Tất cả (All)" IsChecked="True" Checked="Filter_Checked" Tag="ALL" Foreground="#F0F6FC" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                <RadioButton Content="Nhiệt độ (°C)" Checked="Filter_Checked" Tag="TEMP" Foreground="#F0F6FC" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                <RadioButton Content="Công suất (Watts)" Checked="Filter_Checked" Tag="POWER" Foreground="#F0F6FC" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                <RadioButton Content="Xung nhịp (MHz)" Checked="Filter_Checked" Tag="CLOCK" Foreground="#F0F6FC" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Live Sensor Grid -->
+        <Border Grid.Row="2" Background="#161B22" CornerRadius="8" BorderBrush="#30363D" BorderThickness="1">
+            <DataGrid x:Name="SensorGrid" AutoGenerateColumns="False" IsReadOnly="True"
+                      Background="Transparent" RowBackground="#161B22" AlternatingRowBackground="#1C2128"
+                      Foreground="#F0F6FC" BorderThickness="0" GridLinesVisibility="Horizontal"
+                      HorizontalGridLinesBrush="#21262D" HeadersVisibility="Column"
+                      CanUserSortColumns="True" SelectionMode="Single">
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#21262D"/>
+                        <Setter Property="Foreground" Value="#8B949E"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Padding" Value="10,8"/>
+                        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                        <Setter Property="BorderBrush" Value="#30363D"/>
+                    </Style>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Padding" Value="10,6"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="DataGridCell">
+                                    <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
+                                        <ContentPresenter VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </DataGrid.Resources>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Index / Nguồn" Binding="{Binding Id}" Width="120"/>
+                    <DataGridTextColumn Header="Tên Cảm Biến (Sensor Name)" Binding="{Binding Name}" Width="260"/>
+                    <DataGridTemplateColumn Header="Giá Trị Hiện Tại (Live Value)" Width="180">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding FormattedValue}" FontWeight="Bold" FontSize="14" Foreground="{Binding ValueColorBrush}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Min" Binding="{Binding FormattedMin}" Width="90"/>
+                    <DataGridTextColumn Header="Max" Binding="{Binding FormattedMax}" Width="90"/>
+                    <DataGridTextColumn Header="Raw Int" Binding="{Binding RawValue}" Width="90"/>
+                    <DataGridTextColumn Header="Hex Value" Binding="{Binding HexValue}" Width="90"/>
+                    <DataGridTextColumn Header="Supported" Binding="{Binding SupportedText}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- Footer -->
+        <TextBlock Grid.Row="3" Text="💡 Hãy chạy FurMark hoặc tải nặng và quan sát dòng cảm biến nào tăng nhiệt đúng với GPU Hotspot, sau đó báo số Index/Tên cho trợ lý!" 
+                   Foreground="#8B949E" FontSize="12" Margin="0,10,0,0"/>
+    </Grid>
+</Window>

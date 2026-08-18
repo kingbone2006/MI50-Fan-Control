@@ -1,0 +1,182 @@
+<UserControl x:Class="MI50FanControl.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:loc="clr-namespace:MI50FanControl.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="850">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="0,0,0,20">
+
+            <!-- Emergency Warning Banner -->
+            <Border Style="{StaticResource DangerCard}" Visibility="{Binding IsEmergency, Converter={StaticResource BoolToVisibility}}" Margin="0,0,0,16">
+                <DockPanel>
+                    <TextBlock Text="⚠️" FontSize="24" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{loc:Loc EmergencyAlertTitle}" FontWeight="Bold" FontSize="14" Foreground="#EF4444"/>
+                        <TextBlock Text="{loc:Loc EmergencyAlertDesc}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <!-- Top Row: 3 Modern Gauges (GPU Temp, GPU Clock, VRAM Clock) -->
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Card 1: GPU Temperature -->
+                <Border Grid.Column="0" Style="{StaticResource ModernCard}" Margin="0,0,8,0" Background="#161B22">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,4">
+                        <TextBlock Text="{loc:Loc GpuTempLabel}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                        
+                        <!-- Circle Temp Gauge -->
+                        <Border CornerRadius="55" Width="110" Height="110" Background="#0D1117" BorderBrush="{Binding GpuTemperature, Converter={StaticResource TempToBrush}}" BorderThickness="3" HorizontalAlignment="Center" Margin="0,4">
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding GpuTemperatureText}" FontSize="30" FontWeight="Bold" Foreground="{Binding GpuTemperature, Converter={StaticResource TempToBrush}}" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Text="{loc:Loc GpuCoreTemp}" Foreground="{StaticResource TextMutedBrush}" FontSize="11" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Card 2: GPU Clock -->
+                <Border Grid.Column="1" Style="{StaticResource ModernCard}" Margin="8,0,8,0" Background="#161B22">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,4">
+                        <TextBlock Text="{loc:Loc GpuClock}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                        
+                        <!-- Circle Clock Gauge -->
+                        <Border CornerRadius="55" Width="110" Height="110" Background="#0D1117" BorderBrush="#38BDF8" BorderThickness="3" HorizontalAlignment="Center" Margin="0,4">
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding GpuClockText}" FontSize="24" FontWeight="Bold" Foreground="#38BDF8" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Text="Core Graphics Clock" Foreground="{StaticResource TextMutedBrush}" FontSize="11" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Card 3: VRAM Clock -->
+                <Border Grid.Column="2" Style="{StaticResource ModernCard}" Margin="8,0,0,0" Background="#161B22">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,4">
+                        <TextBlock Text="{loc:Loc VramClock}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                        
+                        <!-- Circle VRAM Gauge -->
+                        <Border CornerRadius="55" Width="110" Height="110" Background="#0D1117" BorderBrush="#A855F7" BorderThickness="3" HorizontalAlignment="Center" Margin="0,4">
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding VramClockText}" FontSize="24" FontWeight="Bold" Foreground="#A855F7" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Text="HBM2 Memory Clock" Foreground="{StaticResource TextMutedBrush}" FontSize="11" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Quick Action Bar (Test 100%, Manual Override, Profile Picker) -->
+            <Border Style="{StaticResource ModernCard}" Margin="0,0,0,20">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Test 100% Button -->
+                    <Button Grid.Column="0" Command="{Binding Test100Command}" Style="{StaticResource DangerButton}" Margin="0,0,20,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🚀 " VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Test100ButtonText}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Global Manual Override Toggle & Slider -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <CheckBox IsChecked="{Binding ManualOverride}" Style="{StaticResource ModernCheckBox}" Margin="0,0,12,0">
+                            <TextBlock Text="{loc:Loc ManualOverride}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </CheckBox>
+
+                        <Slider Width="180" Minimum="0" Maximum="100" Value="{Binding ManualSpeed}" 
+                                IsEnabled="{Binding ManualOverride}" Style="{StaticResource ModernSlider}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="{Binding ManualSpeed, StringFormat={}{0:F0}%}" Foreground="{StaticResource AccentCyanBrush}" FontWeight="Bold" VerticalAlignment="Center" Width="40"/>
+                    </StackPanel>
+
+                    <!-- Quick Profile Dropdown -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="{loc:Loc QuickProfile}" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <ComboBox ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}" DisplayMemberPath="LocalizedName" 
+                                  Style="{StaticResource ModernComboBox}" Width="190" IsEnabled="{Binding ManualOverride, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Active Fans Section -->
+            <TextBlock Text="{loc:Loc ActiveFansCount}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,10"/>
+
+            <!-- No Active Fans placeholder -->
+            <Border Style="{StaticResource ModernCard}" Visibility="{Binding HasActiveFans, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}" Padding="24">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="🌀" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                    <TextBlock Text="{loc:Loc NoActiveFans}" Foreground="{StaticResource TextMutedBrush}" FontSize="13" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Active Fans Items Control -->
+            <ItemsControl ItemsSource="{Binding ActiveFans}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource ModernCard}" Margin="0,0,0,10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="180"/>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Fan Icon -->
+                                <Border Grid.Column="0" Width="36" Height="36" CornerRadius="18" Background="#161B22" Margin="0,0,12,0" VerticalAlignment="Center">
+                                    <TextBlock Text="🌀" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+
+                                <!-- Fan Name & Header -->
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" FontSize="13"/>
+                                    <TextBlock Text="{Binding SubtitleText}" Foreground="{StaticResource TextMutedBrush}" FontSize="11"/>
+                                </StackPanel>
+
+                                <!-- Live RPM -->
+                                <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                    <TextBlock Text="{loc:Loc LiveRpm}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="10"/>
+                                    <TextBlock Text="{Binding LiveRpmText}" FontSize="15" FontWeight="Bold" Foreground="#38BDF8"/>
+                                </StackPanel>
+
+                                <!-- PWM % -->
+                                <StackPanel Grid.Column="3" VerticalAlignment="Center">
+                                    <TextBlock Text="{loc:Loc CurrentPwm}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="10"/>
+                                    <TextBlock Text="{Binding CurrentPwmText}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}"/>
+                                </StackPanel>
+
+                                <!-- PWM Mini Visual Bar -->
+                                <ProgressBar Grid.Column="4" Minimum="0" Maximum="100" Value="{Binding CurrentPwm}" Height="8" Margin="10,0,10,0" VerticalAlignment="Center"
+                                             Background="#30363D" Foreground="{StaticResource AccentCyanBrush}"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

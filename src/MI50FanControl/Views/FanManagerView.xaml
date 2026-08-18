@@ -1,0 +1,123 @@
+<UserControl x:Class="MI50FanControl.Views.FanManagerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:loc="clr-namespace:MI50FanControl.Converters"
+             xmlns:models="clr-namespace:MI50FanControl.Models"
+             mc:Ignorable="d" 
+             d:DesignHeight="650" d:DesignWidth="850">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="24,20,24,24">
+
+            <!-- Title & Description -->
+            <StackPanel Margin="0,0,0,16">
+                <TextBlock Text="{loc:Loc FanManagerTitle}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                <TextBlock Text="{loc:Loc FanManagerDesc}" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,0"/>
+            </StackPanel>
+
+            <!-- Fans Configuration List -->
+            <ItemsControl ItemsSource="{Binding Fans}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource ModernCard}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <!-- Top Row: Header & Live RPM -->
+                                <Grid Margin="0,0,0,14">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Icon -->
+                                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="20" Background="#161B22" Margin="0,0,12,0" VerticalAlignment="Center">
+                                        <TextBlock Text="🌀" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Custom Name Input -->
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding SensorName}" Foreground="{StaticResource TextMutedBrush}" FontSize="11"/>
+                                        <TextBox Text="{Binding CustomName, UpdateSourceTrigger=PropertyChanged}" FontSize="14" FontWeight="Bold" 
+                                                 Background="#161B22" Foreground="{StaticResource TextPrimaryBrush}" BorderBrush="{StaticResource BorderDarkBrush}" 
+                                                 Padding="8,4" Margin="0,4,0,0" Width="260" HorizontalAlignment="Left"/>
+                                    </StackPanel>
+
+                                    <!-- Live RPM & Current PWM -->
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Border Background="#161B22" CornerRadius="6" Padding="10,6" Margin="0,0,8,0">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Live: " Foreground="{StaticResource TextSecondaryBrush}" FontSize="11"/>
+                                                <TextBlock Text="{Binding LiveRpmText}" FontWeight="Bold" Foreground="#38BDF8" FontSize="12"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <Border Background="#161B22" CornerRadius="6" Padding="10,6">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="PWM: " Foreground="{StaticResource TextSecondaryBrush}" FontSize="11"/>
+                                                <TextBlock Text="{Binding CurrentPwmText}" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" FontSize="12"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+
+                                <Separator Background="{StaticResource BorderDarkBrush}" Margin="0,0,0,14"/>
+
+                                <!-- Mode Selection Row -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                                    <TextBlock Text="{loc:Loc ControlMode}" Foreground="{StaticResource TextSecondaryBrush}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,20,0"/>
+
+                                    <RadioButton Content="{loc:Loc ModeCurve}" GroupName="{Binding Identifier}" Style="{StaticResource ModernRadioButton}" Margin="0,0,16,0"
+                                                 IsChecked="{Binding Mode, Converter={StaticResource RadioBoolConverter}, ConverterParameter={x:Static models:FanControlMode.FollowCurve}}"/>
+
+                                    <RadioButton Content="{loc:Loc ModeFixed}" GroupName="{Binding Identifier}" Style="{StaticResource ModernRadioButton}" Margin="0,0,16,0"
+                                                 IsChecked="{Binding Mode, Converter={StaticResource RadioBoolConverter}, ConverterParameter={x:Static models:FanControlMode.FixedManual}}"/>
+
+                                    <RadioButton Content="{loc:Loc ModeBios}" GroupName="{Binding Identifier}" Style="{StaticResource ModernRadioButton}"
+                                                 IsChecked="{Binding Mode, Converter={StaticResource RadioBoolConverter}, ConverterParameter={x:Static models:FanControlMode.BiosDefault}}"/>
+                                </StackPanel>
+
+                                <!-- Sliders for Limits & Fixed Speed -->
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="180"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="60"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Min Safe PWM -->
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Loc MinPwm}" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                                    <Slider Grid.Row="0" Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding MinSafePwm}" Style="{StaticResource ModernSlider}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding MinSafePwm, StringFormat={}{0:F0}%}" Foreground="{StaticResource TextPrimaryBrush}" FontWeight="Bold" TextAlignment="Right" VerticalAlignment="Center" Margin="0,0,0,8"/>
+
+                                    <!-- Max Safe PWM -->
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Loc MaxPwm}" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                                    <Slider Grid.Row="1" Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding MaxSafePwm}" Style="{StaticResource ModernSlider}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding MaxSafePwm, StringFormat={}{0:F0}%}" Foreground="{StaticResource TextPrimaryBrush}" FontWeight="Bold" TextAlignment="Right" VerticalAlignment="Center" Margin="0,0,0,8"/>
+
+                                    <!-- Fixed Speed PWM (if manual) -->
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Loc FixedSpeed}" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                                    <Slider Grid.Row="2" Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding FixedSpeedPercent}" Style="{StaticResource ModernSlider}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding FixedSpeedPercent, StringFormat={}{0:F0}%}" Foreground="{StaticResource AccentCyanBrush}" FontWeight="Bold" TextAlignment="Right" VerticalAlignment="Center"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- Save Configurations Button -->
+            <Button Command="{Binding SaveSettingsCommand}" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Right" Padding="24,10" Margin="0,8,0,0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="💾 "/>
+                    <TextBlock Text="{loc:Loc SaveProfile}"/>
+                </StackPanel>
+            </Button>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

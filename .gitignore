@@ -1,0 +1,37 @@
+﻿## Visual Studio / .NET Build Artifacts
+**/[Bb]in/
+**/[Oo]bj/
+**/[Dd]ebug/
+**/[Rr]elease/
+**/x64/
+**/x86/
+**/[Aa][Rr][Mm]/
+**/[Aa][Rr][Mm]64/
+**/[Ll]og/
+**/[Ll]ogs/
+
+## Published / Output Directories
+publish/
+publish_new/
+Setup/
+TempTest_Out/
+
+## Standalone binaries in root
+/MI50FanControl_Setup.exe
+/FanTest70.exe
+
+## User-specific / IDE files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+.idea/
+.vscode/
+
+## OS generated files
+Thumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+.DS_Store

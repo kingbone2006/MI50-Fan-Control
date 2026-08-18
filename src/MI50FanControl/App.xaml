@@ -1,0 +1,18 @@
+<Application x:Class="MI50FanControl.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="clr-namespace:MI50FanControl.Converters">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/Theme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <conv:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+            <conv:TempToBrushConverter x:Key="TempToBrush" />
+            <conv:LogLevelToBrushConverter x:Key="LogLevelToBrush" />
+            <conv:TabHighlightConverter x:Key="TabHighlight" />
+            <conv:RadioBoolConverter x:Key="RadioBoolConverter" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

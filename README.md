@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 
 # 🌀 AMD MI50 / Radeon PRO VII Fan Controller
 
@@ -247,7 +247,8 @@ If you enjoy this project and would like to support its ongoing development, fee
 
 </div>
 
----
+## 📄 License & Acknowledgements / Giấy phép & Tri ân
 
-## 📄 License
-This project is licensed under the [MIT License](LICENSE).
+- **AMD MI50 Fan Control**: Licensed under the [MIT License](LICENSE).
+- **SpeedFan Components & Driver**: Created and copyrighted by **Alfredo Milani Comparetti** ([Almico Software](http://www.almico.com/speedfan.php)). Sincere thanks and full credit to the author for his foundational contributions to hardware monitoring and fan control on Windows.
+

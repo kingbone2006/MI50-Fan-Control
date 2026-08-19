@@ -1,6 +1,6 @@
-﻿MIT License
+MIT License
 
-Copyright (c) 2026 AMD MI50 Fan Control Project
+Copyright (c) 2026 AMD MI50 Fan Control Project - Vu Quoc Hai (kingbone2006)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,34 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+================================================================================
+THIRD-PARTY NOTICES & ACKNOWLEDGEMENTS
+================================================================================
+
+SpeedFan & SpeedFan Engine
+--------------------------
+Original Author & Copyright Holder: Alfredo Milani Comparetti (Almico Software)
+Official Website: http://www.almico.com/speedfan.php
+
+This project utilizes the SpeedFan engine and driver components (including 
+speedfan.exe, speedfan.sys, sfextra.dll, and instspeedfan.exe) to communicate 
+with motherboard SuperIO hardware monitor chips (such as ITE, Nuvoton, Winbond, 
+and Fintek) across diverse PC motherboards.
+
+All intellectual property rights, trademarks, copyrights, and ownership of 
+SpeedFan and its driver components remain exclusively with their original author, 
+Alfredo Milani Comparetti.
+
+SpeedFan is used in this non-commercial, open-source community project with the 
+utmost respect and deepest gratitude for Alfredo Milani Comparetti's pioneering 
+contributions to hardware monitoring and fan control on the Windows platform. 
+We kindly request and appreciate permission to utilize these components solely to 
+provide safe cooling solutions for headless AMD Instinct MI50 and Radeon PRO VII 
+hardware.
+
+If the author or copyright holder of SpeedFan wishes for these components to be 
+modified, updated, or removed from this repository at any time, please contact 
+the project maintainer (https://github.com/kingbone2006/MI50-Fan-Control), and we 
+will promptly comply.
+

@@ -1,0 +1,15 @@
+﻿# Visual Studio & .NET
+bin/
+obj/
+*.user
+*.suo
+publish/
+publish_new/
+temp_publish_app/
+temp_publish_uninst/
+TempTest_Out/
+src/FanDiag/
+src/FanTest70/
+src/TempTest/
+FanTest70.exe
+.vs/

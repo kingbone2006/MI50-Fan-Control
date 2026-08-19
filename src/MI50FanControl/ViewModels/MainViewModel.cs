@@ -59,10 +59,12 @@ namespace MI50FanControl.ViewModels
 
             _engine = new FanControlEngine(_settingsService);
 
+            var updateService = new UpdateService();
+
             DashboardVM = new DashboardViewModel(_settingsService, _engine, _loc);
             CurveEditorVM = new CurveEditorViewModel(_settingsService, _loc);
             FanManagerVM = new FanManagerViewModel(_settingsService, _engine.SuperIo, _loc);
-            SettingsVM = new SettingsViewModel(_settingsService, _engine.SuperIo, _engine.GpuTelemetry, _loc);
+            SettingsVM = new SettingsViewModel(_settingsService, _engine.SuperIo, _engine.GpuTelemetry, _loc, updateService);
             DevLogVM = new DevLogViewModel(_engine);
 
             _currentView = DashboardVM;
@@ -125,6 +127,32 @@ namespace MI50FanControl.ViewModels
 
             // Start hardware engine & background monitoring loop
             _engine.Start();
+
+            // Auto check updates on startup (after 3 seconds)
+            if (_settingsService.Current.AutoCheckUpdates)
+            {
+                System.Threading.Tasks.Task.Delay(3000).ContinueWith(async _ =>
+                {
+                    try
+                    {
+                        var info = await updateService.CheckForUpdatesAsync();
+                        if (info.HasUpdate)
+                        {
+                            System.Windows.Application.Current?.Dispatcher?.InvokeAsync(() =>
+                            {
+                                if (System.Windows.Application.Current?.MainWindow != null && System.Windows.Application.Current.MainWindow.IsVisible)
+                                {
+                                    var dialog = new Views.UpdateDialogView(info, _settingsService, updateService);
+                                    dialog.Owner = System.Windows.Application.Current.MainWindow;
+                                    dialog.ShowDialog();
+                                    SettingsVM.AutoCheckUpdates = _settingsService.Current.AutoCheckUpdates;
+                                }
+                            });
+                        }
+                    }
+                    catch { }
+                });
+            }
 
             // Safety fallback: Dismiss loading overlay after max 3.5s
             System.Threading.Tasks.Task.Delay(3500).ContinueWith(_ =>

@@ -20,6 +20,7 @@ namespace MI50FanControl.Models
         public bool MinimizeToTrayOnClose { get; set; } = true;
         public bool MinimizeToTrayOnMinimize { get; set; } = true;
 
+        public bool AutoCheckUpdates { get; set; } = true;
         public bool EmergencyProtectionEnabled { get; set; } = true;
         public float EmergencyTempThreshold { get; set; } = 90f;
 

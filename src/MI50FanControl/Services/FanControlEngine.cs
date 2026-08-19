@@ -37,12 +37,11 @@ namespace MI50FanControl.Services
         private CancellationTokenSource? _cts;
         private Task? _monitoringTask;
 
-        private float _smoothedTemp = 0f;
-        private float _lockedTemp = 0f;
+        private float _filteredTemp = 0f;
+        private float _referenceTemp = 0f;
         private float _currentPwm = 30f;
-        private DateTime _lastUpChangeTime = DateTime.MinValue;
-        private DateTime _lastDownChangeTime = DateTime.MinValue;
-        private DateTime _tempDropStartTime = DateTime.MinValue;
+        private DateTime _lastCalculationTime = DateTime.UtcNow;
+        private DateTime _cooldownHoldStartTime = DateTime.MinValue;
 
         private bool _isTest100Running = false;
         private int _test100SecondsRemaining = 0;
@@ -142,8 +141,16 @@ namespace MI50FanControl.Services
                     // 2. Read Motherboard Fans Telemetry
                     _superIoManager.UpdateTelemetry();
 
-                    // 3. Determine Control Temperature (Trực tiếp theo GPU Core Temp)
-                    float currentTemp = gpuData.CoreTemperature > 0 ? gpuData.CoreTemperature : gpuData.MemoryTemperature;
+                    // 3. Determine Control Temperature
+                    float currentTemp;
+                    if (_settingsService.Current.SelectedSensor == GpuSensorSource.GpuHotSpot && gpuData.MemoryTemperature > 0)
+                    {
+                        currentTemp = Math.Max(gpuData.CoreTemperature, gpuData.MemoryTemperature);
+                    }
+                    else
+                    {
+                        currentTemp = gpuData.CoreTemperature > 0 ? gpuData.CoreTemperature : gpuData.MemoryTemperature;
+                    }
 
                     // 4. Check Test 100% Status
                     if (_isTest100Running)
@@ -161,7 +168,7 @@ namespace MI50FanControl.Services
                         }
                     }
 
-                    // 5. Calculate Target Fan Speed (Step-by-step 1% smooth engine)
+                    // 5. Calculate Target Fan Speed (Continuous slew-rate & hysteresis)
                     float appliedPwm;
                     bool isEmergency = false;
 
@@ -205,7 +212,8 @@ namespace MI50FanControl.Services
                     LogService.Instance.Debug("Engine Loop", $"Lỗi vòng lặp giám sát: {ex.Message}");
                 }
 
-                await Task.Delay(500, token);
+                int delayMs = Math.Clamp(_settingsService.Current.PollingIntervalMs, 200, 2000);
+                await Task.Delay(delayMs, token);
             }
         }
 
@@ -215,69 +223,83 @@ namespace MI50FanControl.Services
             if (_isTest100Running) return 100f;
             if (_settingsService.Current.GlobalManualOverride) return _settingsService.Current.GlobalManualSpeedPercent;
 
-            if (_smoothedTemp <= 0)
-            {
-                _smoothedTemp = rawTemp;
-                _lockedTemp = rawTemp;
-                _currentPwm = (float)Math.Round(activeProfile.CalculateFanSpeed(rawTemp));
-                return _currentPwm;
-            }
-
-            // 1. Exponential Moving Average for Temperature (eliminates 1-2 degree sensor fluctuations)
-            _smoothedTemp = (_smoothedTemp * 0.85f) + (rawTemp * 0.15f);
-
             DateTime now = DateTime.UtcNow;
+            float dt = (float)(now - _lastCalculationTime).TotalSeconds;
+            _lastCalculationTime = now;
+            if (dt <= 0f || dt > 3f) dt = 0.5f;
 
-            // 2. Temperature Plateau & Hysteresis Lock
-            // When heating up: Only elevate target if smoothed temp rises by >= +1.5°C
-            if (_smoothedTemp >= _lockedTemp + 1.5f)
+            if (rawTemp <= 0f) rawTemp = 40f;
+
+            // 1. Initial State Setup
+            if (_filteredTemp <= 0f)
             {
-                _lockedTemp = _smoothedTemp;
-                _tempDropStartTime = DateTime.MinValue;
+                _filteredTemp = rawTemp;
+                _referenceTemp = rawTemp;
+                _currentPwm = activeProfile.CalculateFanSpeed(rawTemp);
+                return (float)Math.Round(_currentPwm);
             }
-            // When cooling down: Only lower target if smoothed temp drops by >= -2.0°C and stays cool for 4 seconds
-            else if (_smoothedTemp <= _lockedTemp - 2.0f)
+
+            // 2. Exponential Moving Average (EMA) Sensor Filter
+            // Time constant Tau = 3.0s smoothly dampens 1-2 degree sensor jitter
+            float tau = 3.0f;
+            float alpha = dt / (tau + dt);
+            _filteredTemp = _filteredTemp + alpha * (rawTemp - _filteredTemp);
+
+            // 3. Intelligent Asymmetric Temperature Hysteresis
+            float hysteresis = Math.Max(0.5f, _settingsService.Current.HysteresisDegrees);
+
+            if (_filteredTemp > _referenceTemp)
             {
-                if (_tempDropStartTime == DateTime.MinValue)
+                // Heating up: follow temperature upwards smoothly to react before overheating
+                _referenceTemp = _filteredTemp;
+                _cooldownHoldStartTime = DateTime.MinValue;
+            }
+            else if (_filteredTemp < _referenceTemp - hysteresis)
+            {
+                // Cooling down: Require sustained lower temperature before lowering reference temp
+                if (_cooldownHoldStartTime == DateTime.MinValue)
                 {
-                    _tempDropStartTime = now;
+                    _cooldownHoldStartTime = now;
                 }
 
-                if ((now - _tempDropStartTime).TotalSeconds >= 4.0)
+                // Hold fan speed for 3.5 seconds to eliminate hunting / wave oscillation
+                if ((now - _cooldownHoldStartTime).TotalSeconds >= 3.5)
                 {
-                    _lockedTemp = _smoothedTemp;
-                    _tempDropStartTime = DateTime.MinValue;
+                    // Smoothly glide reference temperature downwards (max 1.5°C/s)
+                    float maxDrop = 1.5f * dt;
+                    float targetRef = _filteredTemp + (hysteresis * 0.4f);
+                    if (_referenceTemp > targetRef)
+                    {
+                        _referenceTemp = Math.Max(targetRef, _referenceTemp - maxDrop);
+                    }
                 }
             }
             else
             {
-                // Temperature is hovering within deadband, reset cooldown timer and hold steady!
-                _tempDropStartTime = DateTime.MinValue;
+                // Inside deadband: reset cooldown timer, hold reference temperature constant!
+                _cooldownHoldStartTime = DateTime.MinValue;
             }
 
-            // 3. Calculate target PWM strictly from the stabilized locked temperature
-            float targetCurvePwm = activeProfile.CalculateFanSpeed(_lockedTemp);
-            int roundedTargetPwm = (int)Math.Round(targetCurvePwm);
-            int roundedCurrentPwm = (int)Math.Round(_currentPwm);
+            // 4. Calculate target PWM from the stabilized reference temperature
+            float targetPwm = activeProfile.CalculateFanSpeed(_referenceTemp);
+            targetPwm = Math.Clamp(targetPwm, 0f, 100f);
 
-            // 4. Smooth Step-by-Step 1% adjustment logic
-            if (roundedTargetPwm > roundedCurrentPwm)
+            // 5. Dynamic Slew-Rate Limiting (Ramping)
+            float smoothingRate = Math.Max(1.0f, _settingsService.Current.SmoothingRatePercentPerSec); // % per second
+
+            if (targetPwm > _currentPwm)
             {
-                // Ramping UP: Tăng từng 1% đều đặn mỗi 1000ms (1.0 giây)
-                if ((now - _lastUpChangeTime).TotalMilliseconds >= 1000)
-                {
-                    _currentPwm += 1.0f;
-                    _lastUpChangeTime = now;
-                }
+                // Ramping UP: Responsive and smooth (e.g. 10-15%/s)
+                float upRate = Math.Max(smoothingRate, 10.0f);
+                float maxUpStep = upRate * dt;
+                _currentPwm = Math.Min(targetPwm, _currentPwm + maxUpStep);
             }
-            else if (roundedTargetPwm < roundedCurrentPwm)
+            else if (targetPwm < _currentPwm)
             {
-                // Ramping DOWN: Giảm từng 1% êm ái mỗi 1500ms (1.5 giây)
-                if ((now - _lastDownChangeTime).TotalMilliseconds >= 1500)
-                {
-                    _currentPwm -= 1.0f;
-                    _lastDownChangeTime = now;
-                }
+                // Ramping DOWN: Quiet and gentle (e.g. 3-6%/s)
+                float downRate = Math.Max(2.0f, smoothingRate * 0.6f);
+                float maxDownStep = downRate * dt;
+                _currentPwm = Math.Max(targetPwm, _currentPwm - maxDownStep);
             }
 
             _currentPwm = Math.Clamp(_currentPwm, 0f, 100f);
@@ -302,20 +324,18 @@ namespace MI50FanControl.Services
                 float targetPwm = globalPwm;
                 if (cfg != null)
                 {
-                    switch (cfg.Mode)
+                    if (cfg.Mode == FanControlMode.BiosDefault)
                     {
-                        case FanControlMode.BiosDefault:
-                            _superIoManager.RestoreBiosControl(fan.Id);
-                            continue;
-
-                        case FanControlMode.FixedManual:
-                            targetPwm = cfg.FixedSpeedPercent;
-                            break;
-
-                        case FanControlMode.FollowCurve:
-                        default:
-                            targetPwm = globalPwm;
-                            break;
+                        // Giữ nguyên BIOS Default, không can thiệp đè PWM
+                        continue;
+                    }
+                    else if (cfg.Mode == FanControlMode.FixedManual)
+                    {
+                        targetPwm = cfg.FixedSpeedPercent;
+                    }
+                    else
+                    {
+                        targetPwm = globalPwm;
                     }
 
                     targetPwm = Math.Clamp(targetPwm, cfg.MinSafePwmPercent, cfg.MaxSafePwmPercent);

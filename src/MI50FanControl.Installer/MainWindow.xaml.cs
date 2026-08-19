@@ -51,6 +51,32 @@ namespace MI50FanControl.Installer
 
             InstallPathBox.Text = defaultPath;
 
+            bool isSilent = args.Any(a => a.Equals("--silent", StringComparison.OrdinalIgnoreCase) || a.Equals("/silent", StringComparison.OrdinalIgnoreCase) || a.Equals("/s", StringComparison.OrdinalIgnoreCase) || a.Equals("-s", StringComparison.OrdinalIgnoreCase));
+            if (isSilent)
+            {
+                Loaded += (s, e) =>
+                {
+                    try
+                    {
+                        Hide();
+                        PerformInstallation(defaultPath, true, true);
+                        string mainExe = Path.Combine(defaultPath, "MI50FanControl.exe");
+                        if (File.Exists(mainExe))
+                        {
+                            Process.Start(new ProcessStartInfo
+                            {
+                                FileName = mainExe,
+                                WorkingDirectory = defaultPath,
+                                UseShellExecute = true,
+                                Verb = "runas"
+                            });
+                        }
+                    }
+                    catch { }
+                    Environment.Exit(0);
+                };
+            }
+
             // Initialize Language and Prerequisites check
             ApplyLanguage();
             CheckPrerequisites();

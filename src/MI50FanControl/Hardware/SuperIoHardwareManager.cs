@@ -472,13 +472,17 @@ namespace MI50FanControl.Hardware
             }
         }
 
+        private readonly Dictionary<int, int> _lastWrittenChannelPwm = new();
+
         public bool SetFanSpeed(string fanId, float pwmPercent)
         {
             var fan = _activeFans.FirstOrDefault(f => f.Id == fanId || f.Identifier == fanId);
             if (fan == null) return false;
 
             float clamped = Math.Clamp(pwmPercent, 0f, 100f);
-            SetEnginePwm((int)clamped);
+            int targetInt = (int)Math.Round(clamped);
+            int channelIdx = fan.Index >= 0 ? fan.Index : 0;
+            SetChannelPwm(channelIdx, targetInt);
             fan.CurrentPwmPercent = clamped;
             return true;
         }
@@ -486,20 +490,22 @@ namespace MI50FanControl.Hardware
         public void SetAllFansSpeed(float pwmPercent)
         {
             float clamped = Math.Clamp(pwmPercent, 0f, 100f);
-            SetEnginePwm((int)clamped);
+            int targetInt = (int)Math.Round(clamped);
+            SetChannelPwm(-1, targetInt);
             foreach (var fan in _activeFans)
             {
                 fan.CurrentPwmPercent = clamped;
             }
         }
 
-        private int _lastWrittenPwm = -1;
-
-        private void SetEnginePwm(int percent)
+        public void SetChannelPwm(int channelIndex, int percent)
         {
             percent = Math.Clamp(percent, 0, 100);
-            if (percent == _lastWrittenPwm) return;
-            _lastWrittenPwm = percent;
+            if (_lastWrittenChannelPwm.TryGetValue(channelIndex, out int last) && last == percent)
+            {
+                return;
+            }
+            _lastWrittenChannelPwm[channelIndex] = percent;
 
             var procs = Process.GetProcessesByName("speedfan");
             if (procs.Length == 0) return;
@@ -510,6 +516,7 @@ namespace MI50FanControl.Hardware
                 GetWindowThreadProcessId(hWnd, out uint pid);
                 if (pid == sfPid)
                 {
+                    int currentEditIdx = 0;
                     EnumChildWindows(hWnd, (child, param) =>
                     {
                         StringBuilder cCls = new StringBuilder(256);
@@ -518,9 +525,13 @@ namespace MI50FanControl.Hardware
 
                         if (clsName == "TEdit" || clsName.Contains("Edit"))
                         {
-                            SendMessage(child, WM_SETTEXT, IntPtr.Zero, percent.ToString());
-                            IntPtr wParam = (IntPtr)((EN_CHANGE << 16) | (child.ToInt32() & 0xFFFF));
-                            SendMessage(hWnd, WM_COMMAND, wParam, child);
+                            if (channelIndex < 0 || currentEditIdx == channelIndex)
+                            {
+                                SendMessage(child, WM_SETTEXT, IntPtr.Zero, percent.ToString());
+                                IntPtr wParam = (IntPtr)((EN_CHANGE << 16) | (child.ToInt32() & 0xFFFF));
+                                SendMessage(hWnd, WM_COMMAND, wParam, child);
+                            }
+                            currentEditIdx++;
                         }
                         return true;
                     }, IntPtr.Zero);
@@ -531,7 +542,7 @@ namespace MI50FanControl.Hardware
 
         public void RestoreBiosControl(string? fanId = null)
         {
-            SetEnginePwm(20);
+            // Do not override when under BIOS default control
         }
 
         public void Dispose()

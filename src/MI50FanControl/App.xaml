@@ -13,6 +13,7 @@
             <conv:LogLevelToBrushConverter x:Key="LogLevelToBrush" />
             <conv:TabHighlightConverter x:Key="TabHighlight" />
             <conv:RadioBoolConverter x:Key="RadioBoolConverter" />
+            <conv:InverseBoolConverter x:Key="InverseBool" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

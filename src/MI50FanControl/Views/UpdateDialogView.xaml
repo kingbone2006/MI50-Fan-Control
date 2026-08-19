@@ -1,0 +1,98 @@
+<Window x:Class="MI50FanControl.Views.UpdateDialogView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:loc="clr-namespace:MI50FanControl.Converters"
+        mc:Ignorable="d"
+        Title="{loc:Loc UpdateDialogTitle}"
+        Width="580" Height="480"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="{StaticResource BgDarkBrush}"
+        FontFamily="{StaticResource MainFont}"
+        Icon="/Assets/app.ico">
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Width="48" Height="48" CornerRadius="24" Background="#1E293B" BorderBrush="#38BDF8" BorderThickness="2" Margin="0,0,14,0">
+                <TextBlock Text="🚀" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <TextBlock Text="{loc:Loc UpdateDialogHeader}" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                    <TextBlock Text="Phiên bản hiện tại: " Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"/>
+                    <TextBlock Text="v2.0" Foreground="#94A3B8" FontWeight="SemiBold" FontSize="12" Margin="0,0,12,0"/>
+                    <TextBlock Text="➔ Mới nhất: " Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"/>
+                    <TextBlock x:Name="NewVersionText" Text="v2.1" Foreground="#38BDF8" FontWeight="Bold" FontSize="12"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <!-- Changelog Card -->
+        <Border Grid.Row="1" Style="{StaticResource ModernCard}" Padding="12" Margin="0,0,0,16">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <TextBlock Grid.Row="0" Text="{loc:Loc WhatsNew}" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource AccentCyanBrush}" Margin="0,0,0,8"/>
+                
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <TextBox x:Name="ChangelogBox" IsReadOnly="True" TextWrapping="Wrap" Background="Transparent" Foreground="{StaticResource TextPrimaryBrush}" BorderThickness="0" FontSize="12" FontFamily="Segoe UI, Consolas"/>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <!-- Progress Bar (Visible during download) -->
+        <StackPanel Grid.Row="2" x:Name="DownloadProgressPanel" Visibility="Collapsed" Margin="0,0,0,14">
+            <Grid Margin="0,0,0,6">
+                <TextBlock x:Name="DownloadStatusText" Text="Đang tải bản cập nhật..." Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"/>
+                <TextBlock x:Name="DownloadPercentText" Text="0%" Foreground="#38BDF8" FontWeight="Bold" FontSize="12" HorizontalAlignment="Right"/>
+            </Grid>
+            <ProgressBar x:Name="DownloadProgressBar" Height="8" Minimum="0" Maximum="100" Value="0" Foreground="{StaticResource AccentCyanBrush}" Background="#1E293B" BorderThickness="0"/>
+        </StackPanel>
+
+        <!-- Footer Actions -->
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Disable Auto Update Checkbox -->
+            <CheckBox Grid.Column="0" x:Name="DisableAutoCheck" Style="{StaticResource ModernCheckBox}" VerticalAlignment="Center">
+                <TextBlock Text="{loc:Loc DisableAutoCheck}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+            </CheckBox>
+
+            <!-- Buttons -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button x:Name="IgnoreBtn" Click="IgnoreBtn_Click" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0">
+                    <TextBlock Text="{loc:Loc RemindLaterBtn}"/>
+                </Button>
+
+                <Button x:Name="UpdateNowBtn" Click="UpdateNowBtn_Click" Style="{StaticResource PrimaryButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="⚡ "/>
+                        <TextBlock Text="{loc:Loc UpdateNowBtn}"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

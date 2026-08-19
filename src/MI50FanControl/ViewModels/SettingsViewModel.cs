@@ -132,6 +132,38 @@ namespace MI50FanControl.ViewModels
             }
         }
 
+        private readonly UpdateService _updateService;
+        private string _checkUpdateStatus = string.Empty;
+        private bool _isCheckingUpdate = false;
+
+        public string AppVersionDisplay => UpdateService.CurrentVersionDisplay;
+
+        public bool AutoCheckUpdates
+        {
+            get => _settingsService.Current.AutoCheckUpdates;
+            set
+            {
+                if (_settingsService.Current.AutoCheckUpdates != value)
+                {
+                    _settingsService.Current.AutoCheckUpdates = value;
+                    _settingsService.Save();
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string CheckUpdateStatus
+        {
+            get => _checkUpdateStatus;
+            set => SetProperty(ref _checkUpdateStatus, value);
+        }
+
+        public bool IsCheckingUpdate
+        {
+            get => _isCheckingUpdate;
+            set => SetProperty(ref _isCheckingUpdate, value);
+        }
+
         public float EmergencyThreshold
         {
             get => _emergencyThreshold;
@@ -156,13 +188,15 @@ namespace MI50FanControl.ViewModels
         public ICommand SaveEmergencyCommand { get; }
         public ICommand ResetEmergencyDefaultCommand { get; }
         public ICommand ResetAllDefaultsCommand { get; }
+        public ICommand CheckUpdatesCommand { get; }
 
-        public SettingsViewModel(SettingsService settingsService, SuperIoHardwareManager superIo, AmdGpuTelemetry gpu, LocalizationService loc)
+        public SettingsViewModel(SettingsService settingsService, SuperIoHardwareManager superIo, AmdGpuTelemetry gpu, LocalizationService loc, UpdateService updateService)
         {
             _settingsService = settingsService;
             _superIo = superIo;
             _gpu = gpu;
             _loc = loc;
+            _updateService = updateService;
 
             _emergencyThreshold = _settingsService.Current.EmergencyTempThreshold;
 
@@ -171,6 +205,7 @@ namespace MI50FanControl.ViewModels
             SaveEmergencyCommand = new RelayCommand(SaveEmergencySettings);
             ResetEmergencyDefaultCommand = new RelayCommand(ResetEmergencyDefault);
             ResetAllDefaultsCommand = new RelayCommand(ResetAllDefaults);
+            CheckUpdatesCommand = new RelayCommand(async () => await PerformCheckUpdateAsync(true));
 
             if (AutoStartService.IsAutoStartEnabled())
             {
@@ -179,6 +214,42 @@ namespace MI50FanControl.ViewModels
 
             RefreshLanguages();
             RefreshHardwareInfo();
+        }
+
+        public async System.Threading.Tasks.Task PerformCheckUpdateAsync(bool isManual)
+        {
+            if (IsCheckingUpdate) return;
+            IsCheckingUpdate = true;
+            CheckUpdateStatus = _loc.Get("CheckingUpdates", "Đang kiểm tra bản cập nhật...");
+
+            try
+            {
+                var info = await _updateService.CheckForUpdatesAsync();
+                if (info.HasUpdate)
+                {
+                    CheckUpdateStatus = $"🚀 {_loc.Get("UpdateFound", "Đã tìm thấy bản")} {info.LatestVersion}!";
+                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        var dialog = new Views.UpdateDialogView(info, _settingsService, _updateService);
+                        dialog.Owner = System.Windows.Application.Current.MainWindow;
+                        dialog.ShowDialog();
+                        OnPropertyChanged(nameof(AutoCheckUpdates));
+                    });
+                }
+                else
+                {
+                    CheckUpdateStatus = _loc.Get("UpToDate", "✅ Bạn đang sử dụng phiên bản mới nhất (v2.0)!");
+                }
+            }
+            catch (Exception ex)
+            {
+                CheckUpdateStatus = _loc.Get("UpdateCheckFailed", "⚠️ Không thể kết nối tới GitHub để kiểm tra.");
+                LogService.Instance.Error("UpdateCheck", ex.Message);
+            }
+            finally
+            {
+                IsCheckingUpdate = false;
+            }
         }
 
         public void SaveEmergencySettings()

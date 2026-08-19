@@ -144,7 +144,46 @@
                 </StackPanel>
             </Border>
 
-            <!-- 5. Factory Defaults Reset Card -->
+            <!-- 5. Application Updates Card -->
+            <Border Style="{StaticResource ModernCard}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="{loc:Loc UpdateSection}" FontSize="14" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,12"/>
+
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{loc:Loc CurrentVersionLabel}" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding AppVersionDisplay}" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" FontSize="13" Margin="0,0,8,0"/>
+                            <TextBlock Text="(Build 2.0.0)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <CheckBox IsChecked="{Binding AutoCheckUpdates}" Style="{StaticResource ModernCheckBox}" Margin="0,0,0,14">
+                        <TextBlock Text="{loc:Loc AutoCheckUpdates}"/>
+                    </CheckBox>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="{Binding CheckUpdateStatus}" Foreground="{StaticResource AccentCyanBrush}" FontWeight="SemiBold" FontSize="12" VerticalAlignment="Center"/>
+
+                        <Button Grid.Column="1" Command="{Binding CheckUpdatesCommand}" Style="{StaticResource SecondaryButton}" IsEnabled="{Binding IsCheckingUpdate, Converter={StaticResource InverseBool}}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🔍 "/>
+                                <TextBlock Text="{loc:Loc CheckUpdatesBtn}"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- 6. Factory Defaults Reset Card -->
             <Border Style="{StaticResource ModernCard}">
                 <StackPanel>
                     <Grid>

@@ -97,6 +97,7 @@ namespace MI50FanControl.ViewModels
         public ICommand DeleteProfileCommand { get; }
         public ICommand AddPointCommand { get; }
         public ICommand RemovePointCommand { get; }
+        public ICommand ResetDefaultCurvesCommand { get; }
         public ICommand SaveCommand { get; }
 
         public event Action? ProfilesChanged;
@@ -115,9 +116,24 @@ namespace MI50FanControl.ViewModels
             DeleteProfileCommand = new RelayCommand(DeleteSelectedProfile, () => SelectedProfile != null && Profiles.Count > 1);
             AddPointCommand = new RelayCommand(AddPointToProfile, () => SelectedProfile != null);
             RemovePointCommand = new RelayCommand(RemoveSelectedPoint, () => SelectedPoint != null && Points.Count > 2);
+            ResetDefaultCurvesCommand = new RelayCommand(ResetDefaultProfiles);
             SaveCommand = new RelayCommand(SaveProfileChanges);
 
             RefreshProfiles();
+        }
+
+        public void ResetDefaultProfiles()
+        {
+            _settingsService.Current.CurveProfiles = FanCurveProfile.CreateDefaultProfiles();
+            _settingsService.Current.ActiveCurveProfileId = "balanced";
+            _settingsService.Current.HysteresisDegrees = 2.0f;
+            _settingsService.Current.SmoothingRatePercentPerSec = 8.0f;
+            _settingsService.Save();
+
+            Hysteresis = 2.0f;
+            Smoothing = 8.0f;
+            RefreshProfiles();
+            ProfilesChanged?.Invoke();
         }
 
         public void RefreshProfiles()

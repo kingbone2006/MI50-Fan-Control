@@ -98,21 +98,72 @@
             </Border>
 
             <!-- 4. Emergency Overheat Threshold Card -->
-            <Border Style="{StaticResource ModernCard}">
+            <Border Style="{StaticResource ModernCard}" Margin="0,0,0,16">
                 <StackPanel>
                     <TextBlock Text="{loc:Loc EmergencyProtection}" FontSize="14" FontWeight="Bold" Foreground="#FCA5A5" Margin="0,0,0,4"/>
                     <TextBlock Text="{loc:Loc EmergencyDesc}" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,14"/>
 
-                    <Grid>
+                    <!-- Slider Row -->
+                    <Grid Margin="0,0,0,14">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="260"/>
+                            <ColumnDefinition Width="240"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="65"/>
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Column="0" Text="{loc:Loc EmergencyThreshold}" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
-                        <Slider Grid.Column="1" Minimum="75" Maximum="100" Value="{Binding EmergencyThreshold}" Style="{StaticResource ModernSlider}" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="{Binding EmergencyThresholdText}" Foreground="#F87171" FontWeight="Bold" TextAlignment="Right" VerticalAlignment="Center"/>
+                        <Slider Grid.Column="1" Minimum="70" Maximum="105" Value="{Binding EmergencyThreshold}" Style="{StaticResource ModernSlider}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="{Binding EmergencyThresholdText}" Foreground="#F87171" FontWeight="Bold" FontSize="14" TextAlignment="Right" VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <!-- Save & Apply Bar -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="{Binding SaveStatusMessage}" Foreground="#4ADE80" FontWeight="SemiBold" FontSize="12" VerticalAlignment="Center"/>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button Command="{Binding ResetEmergencyDefaultCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="↺ "/>
+                                    <TextBlock Text="{loc:Loc DefaultEmergencyBtn}"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Command="{Binding SaveEmergencyCommand}" Style="{StaticResource PrimaryButton}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="💾 "/>
+                                    <TextBlock Text="{loc:Loc SaveAndApply}"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- 5. Factory Defaults Reset Card -->
+            <Border Style="{StaticResource ModernCard}">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock Text="{loc:Loc ResetDefaults}" FontSize="14" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                            <TextBlock Text="{loc:Loc ResetDefaultsDesc}" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,16,0" TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                        <Button Grid.Column="1" Command="{Binding ResetAllDefaultsCommand}" Style="{StaticResource DangerButton}" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="↺ "/>
+                                <TextBlock Text="{loc:Loc ResetDefaultsBtn}"/>
+                            </StackPanel>
+                        </Button>
                     </Grid>
                 </StackPanel>
             </Border>

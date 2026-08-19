@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using System.Windows.Threading;
 using MI50FanControl.Hardware;
 using MI50FanControl.Models;
 using MI50FanControl.Services;
@@ -20,6 +21,11 @@ namespace MI50FanControl.ViewModels
         private string _superIoChip = "Detecting...";
         private string _gpuModel = "AMD Radeon Instinct MI50 / Radeon PRO VII";
         private LanguageOption? _selectedLanguage;
+        private float _emergencyThreshold = 90f;
+        private string _saveStatusMessage = string.Empty;
+        private DispatcherTimer? _statusTimer;
+
+        public event Action? SettingsReset;
 
         public ObservableCollection<LanguageOption> AvailableLanguages { get; } = new();
 
@@ -128,22 +134,28 @@ namespace MI50FanControl.ViewModels
 
         public float EmergencyThreshold
         {
-            get => _settingsService.Current.EmergencyTempThreshold;
+            get => _emergencyThreshold;
             set
             {
-                if (_settingsService.Current.EmergencyTempThreshold != value)
+                if (SetProperty(ref _emergencyThreshold, value))
                 {
-                    _settingsService.Current.EmergencyTempThreshold = value;
-                    _settingsService.Save();
-                    OnPropertyChanged();
                     OnPropertyChanged(nameof(EmergencyThresholdText));
                 }
             }
         }
 
-        public string EmergencyThresholdText => $"{EmergencyThreshold:F0}°C";
+        public string EmergencyThresholdText => $"{_emergencyThreshold:F0}°C";
+
+        public string SaveStatusMessage
+        {
+            get => _saveStatusMessage;
+            set => SetProperty(ref _saveStatusMessage, value);
+        }
 
         public ICommand OpenLangFolderCommand { get; }
+        public ICommand SaveEmergencyCommand { get; }
+        public ICommand ResetEmergencyDefaultCommand { get; }
+        public ICommand ResetAllDefaultsCommand { get; }
 
         public SettingsViewModel(SettingsService settingsService, SuperIoHardwareManager superIo, AmdGpuTelemetry gpu, LocalizationService loc)
         {
@@ -152,7 +164,13 @@ namespace MI50FanControl.ViewModels
             _gpu = gpu;
             _loc = loc;
 
+            _emergencyThreshold = _settingsService.Current.EmergencyTempThreshold;
+
             OpenLangFolderCommand = new RelayCommand(() => _loc.OpenLanguageFolder());
+
+            SaveEmergencyCommand = new RelayCommand(SaveEmergencySettings);
+            ResetEmergencyDefaultCommand = new RelayCommand(ResetEmergencyDefault);
+            ResetAllDefaultsCommand = new RelayCommand(ResetAllDefaults);
 
             if (AutoStartService.IsAutoStartEnabled())
             {
@@ -161,6 +179,61 @@ namespace MI50FanControl.ViewModels
 
             RefreshLanguages();
             RefreshHardwareInfo();
+        }
+
+        public void SaveEmergencySettings()
+        {
+            _settingsService.Current.EmergencyTempThreshold = _emergencyThreshold;
+            _settingsService.Save();
+            SetStatusMessage(_loc.Get("SaveSuccess", "✅ Đã lưu & áp dụng thành công!"));
+        }
+
+        public void ResetEmergencyDefault()
+        {
+            EmergencyThreshold = 90f;
+            _settingsService.Current.EmergencyTempThreshold = 90f;
+            _settingsService.Save();
+            SetStatusMessage(_loc.Get("SaveSuccess", "✅ Đã lưu & áp dụng thành công!"));
+        }
+
+        public void ResetAllDefaults()
+        {
+            _settingsService.Current.EmergencyProtectionEnabled = true;
+            _settingsService.Current.EmergencyTempThreshold = 90f;
+            _settingsService.Current.HysteresisDegrees = 2.0f;
+            _settingsService.Current.SmoothingRatePercentPerSec = 8.0f;
+            _settingsService.Current.PollingIntervalMs = 800;
+            _settingsService.Current.CurveProfiles = FanCurveProfile.CreateDefaultProfiles();
+            _settingsService.Current.ActiveCurveProfileId = "balanced";
+            _settingsService.Current.GlobalManualOverride = false;
+            _settingsService.Current.GlobalManualSpeedPercent = 60f;
+            _settingsService.Current.MinimizeToTrayOnClose = true;
+            _settingsService.Current.MinimizeToTrayOnMinimize = true;
+            _settingsService.Current.SelectedSensor = GpuSensorSource.GpuHotSpot;
+            _settingsService.Save();
+
+            EmergencyThreshold = 90f;
+            MinimizeToTrayClose = true;
+            MinimizeToTrayMin = true;
+
+            SettingsReset?.Invoke();
+            SetStatusMessage(_loc.Get("ResetDefaultsSuccess", "✅ Đã khôi phục toàn bộ cài đặt về mặc định chuẩn thành công!"));
+        }
+
+        private void SetStatusMessage(string message)
+        {
+            SaveStatusMessage = message;
+            _statusTimer?.Stop();
+            _statusTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(4)
+            };
+            _statusTimer.Tick += (s, e) =>
+            {
+                SaveStatusMessage = string.Empty;
+                _statusTimer?.Stop();
+            };
+            _statusTimer.Start();
         }
 
         public void RefreshLanguages()
@@ -180,6 +253,7 @@ namespace MI50FanControl.ViewModels
             Motherboard = _superIo.MotherboardName;
             SuperIoChip = _superIo.SuperIoChipName;
             GpuModel = _gpu.GpuName;
+            EmergencyThreshold = _settingsService.Current.EmergencyTempThreshold;
         }
 
         public void UpdateTelemetry(AmdGpuTelemetryData data)

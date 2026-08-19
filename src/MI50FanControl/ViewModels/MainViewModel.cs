@@ -106,6 +106,14 @@ namespace MI50FanControl.ViewModels
                 DashboardVM.RefreshProfilesList();
             };
 
+            SettingsVM.SettingsReset += () =>
+            {
+                DashboardVM.RefreshProfilesList();
+                CurveEditorVM.RefreshProfiles();
+                CurveEditorVM.Hysteresis = _settingsService.Current.HysteresisDegrees;
+                CurveEditorVM.Smoothing = _settingsService.Current.SmoothingRatePercentPerSec;
+            };
+
             _loc.LanguageChanged += (s, e) =>
             {
                 DashboardVM.RefreshProfilesList();

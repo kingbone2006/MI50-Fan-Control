@@ -24,6 +24,12 @@
 
                 <!-- Profile Action Buttons -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Command="{Binding ResetDefaultCurvesCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="↺ "/>
+                            <TextBlock Text="{loc:Loc ResetCurvesBtn}"/>
+                        </StackPanel>
+                    </Button>
                     <Button Command="{Binding NewProfileCommand}" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="➕ "/>

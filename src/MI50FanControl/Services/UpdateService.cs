@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
@@ -19,8 +19,8 @@ namespace MI50FanControl.Services
 
     public class UpdateService
     {
-        public static readonly Version CurrentVersion = new Version(2, 0, 0);
-        public static readonly string CurrentVersionDisplay = "v2.0";
+        public static readonly Version CurrentVersion = new Version(3, 0, 0);
+        public static readonly string CurrentVersionDisplay = "v3.0";
         public const string GitHubApiUrl = "https://api.github.com/repos/kingbone2006/MI50-Fan-Control/releases/latest";
         public const string GitHubRepoUrl = "https://github.com/kingbone2006/MI50-Fan-Control";
 

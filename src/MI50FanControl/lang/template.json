@@ -90,7 +90,7 @@
   "AutoCheckUpdates": "Automatically check for updates on startup",
   "CheckUpdatesBtn": "Check for Updates Now",
   "CheckingUpdates": "Checking for updates from GitHub...",
-  "UpToDate": "You are running the latest version (v2.0)!",
+  "UpToDate": "You are running the latest version (v3.0)!",
   "UpdateCheckFailed": "Failed to connect to GitHub to check for updates.",
   "UpdateFound": "Found new update",
   "UpdateDialogTitle": "New Update Available - AMD MI50 Fan Control",

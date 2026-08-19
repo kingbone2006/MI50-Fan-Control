@@ -1,6 +1,6 @@
 {
   "AppTitle": "AMD MI50 / Radeon PRO VII Fan Controller",
-  "Subtitle": "Tác giả: Vũ Quốc Hải | Phiên bản: v2.0",
+  "Subtitle": "Tác giả: Vũ Quốc Hải | Phiên bản: v3.0",
   "NavDashboard": "Bảng Điều Khiển",
   "NavCurves": "Đường Cong Quạt",
   "NavFanManager": "Quản Lý Quạt",
@@ -99,7 +99,7 @@
   "AutoCheckUpdates": "Tự động kiểm tra bản cập nhật khi khởi động",
   "CheckUpdatesBtn": "Kiểm Tra Cập Nhật Ngay",
   "CheckingUpdates": "Đang kiểm tra bản cập nhật từ GitHub...",
-  "UpToDate": "✅ Bạn đang sử dụng phiên bản mới nhất (v2.0)!",
+  "UpToDate": "✅ Bạn đang sử dụng phiên bản mới nhất (v3.0)!",
   "UpdateCheckFailed": "⚠️ Không thể kết nối tới GitHub để kiểm tra cập nhật.",
   "UpdateFound": "Đã tìm thấy bản",
   "UpdateDialogTitle": "Bản Cập Nhật Mới Có Sẵn - AMD MI50 Fan Control",
@@ -115,7 +115,8 @@
   "TrayTooltip": "AMD MI50 Fan Control",
 
   "LoadingHardware": "Đang khởi động phần cứng & nạp cảm biến quạt...",
-  "ConnectingEngine": "Đang kết nối SpeedFan Engine. Vui lòng đợi trong giây lát...",
+  "ConnectingEngine": "Đang kết nối SuperIO Hardware Engine. Vui lòng đợi trong giây lát...",
+
 
   "ProfileName_Silent": "Yên Tĩnh (Silent)",
   "ProfileName_Balanced": "Cân Bằng (Balanced)",

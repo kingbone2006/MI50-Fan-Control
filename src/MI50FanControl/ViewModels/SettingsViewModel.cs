@@ -238,7 +238,7 @@ namespace MI50FanControl.ViewModels
                 }
                 else
                 {
-                    CheckUpdateStatus = _loc.Get("UpToDate", "✅ Bạn đang sử dụng phiên bản mới nhất (v2.0)!");
+                    CheckUpdateStatus = _loc.Get("UpToDate", "✅ Bạn đang sử dụng phiên bản mới nhất (v3.0)!");
                 }
             }
             catch (Exception ex)

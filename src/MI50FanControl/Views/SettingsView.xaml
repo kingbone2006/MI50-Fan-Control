@@ -157,7 +157,8 @@
                         <TextBlock Grid.Column="0" Text="{loc:Loc CurrentVersionLabel}" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock Text="{Binding AppVersionDisplay}" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" FontSize="13" Margin="0,0,8,0"/>
-                            <TextBlock Text="(Build 2.0.0)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"/>
+                            <TextBlock Text="(Build 3.0.0)" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"/>
+
                         </StackPanel>
                     </Grid>
 

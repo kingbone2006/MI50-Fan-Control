@@ -619,20 +619,23 @@ namespace MI50FanControl.Installer
                     CreateNoWindow = true,
                     UseShellExecute = false
                 };
-                Process.Start(psiCreate)?.WaitForExit(2000);
+                Process.Start(psiCreate)?.WaitForExit(1500);
 
                 var psiStart = new ProcessStartInfo("sc.exe", "start speedfan")
                 {
                     CreateNoWindow = true,
                     UseShellExecute = false
                 };
-                Process.Start(psiStart)?.WaitForExit(2000);
+                Process.Start(psiStart)?.WaitForExit(1500);
             }
             catch { }
 
             string mainExePath = Path.Combine(installDir, "MI50FanControl.exe");
             string uninstallExePath = Path.Combine(installDir, "Uninstall.exe");
             string iconPath = Path.Combine(installDir, "Assets", "app.ico");
+
+
+
 
             // 4. Create Desktop Shortcut
             if (createDesktopShortcut && File.Exists(mainExePath))
@@ -671,7 +674,7 @@ namespace MI50FanControl.Installer
                 if (key != null)
                 {
                     key.SetValue("DisplayName", "AMD MI50 / Radeon PRO VII Fan Controller");
-                    key.SetValue("DisplayVersion", "1.0.0");
+                    key.SetValue("DisplayVersion", "3.0.0");
                     key.SetValue("Publisher", "Vũ Quốc Hải");
                     key.SetValue("InstallLocation", installDir);
                     key.SetValue("UninstallString", $"\"{uninstallExePath}\"");
@@ -681,6 +684,7 @@ namespace MI50FanControl.Installer
                 }
             }
             catch { }
+
 
             // 7. Start With Windows (Elevated Scheduled Task + Registry)
             if (startWithWindows && File.Exists(mainExePath))

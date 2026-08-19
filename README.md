@@ -38,7 +38,7 @@
 ## 📖 Giới thiệu
 **MI50 Fan Control** là phần mềm chuyên dụng hỗ trợ điều khiển tốc độ quạt tản nhiệt bo mạch chủ gắn ngoài dành cho card đồ họa **AMD Radeon Instinct MI50** (bao gồm các phiên bản mod BIOS **Radeon PRO VII 16GB**).
 
-Phần mềm tích hợp engine **SpeedFan** ngầm để điều khiển trực tiếp tốc độ quạt (PWM) của các chân cắm quạt trên bo mạch chủ, giúp **dễ dàng tương thích và hỗ trợ nhiều loại chip quản lý I/O (SuperIO) trên nhiều bo mạch chủ khác nhau**. Đồng thời, phần mềm kết hợp giao tiếp trực tiếp Driver AMD để hiển thị các thông số phần cứng thiết yếu theo thời gian thực (Nhiệt độ nhân GPU, Nhiệt độ HotSpot, Xung nhịp GPU Clock và Bộ nhớ VRAM).
+Phiên bản **v3.0** nâng cấp cơ chế **nhận diện ĐỘNG 100% chip quản lý I/O (SuperIO) và bo mạch chủ theo từng máy thực tế** (ITE IT86xx/IT87xx, Nuvoton NCT679x/NCT668x/NCT677x, Fintek, Winbond, EC) thay vì hiển thị tĩnh/hardcode như trước đây. Kết hợp cùng engine **SpeedFan** và driver LPC quét cổng trực tiếp, phần mềm cho phép điều khiển trực tiếp tốc độ quạt (PWM) của các chân cắm quạt bo mạch chủ một cách mượt mà và tương thích rộng rãi. Đồng thời, phần mềm kết hợp giao tiếp trực tiếp Driver AMD để hiển thị các thông số phần cứng thiết yếu theo thời gian thực (Nhiệt độ nhân GPU, Nhiệt độ HotSpot, Xung nhịp GPU Clock và Bộ nhớ VRAM).
 
 ---
 
@@ -52,11 +52,14 @@ Phần mềm tích hợp engine **SpeedFan** ngầm để điều khiển trực
   * **GPU VRAM:** Thông tin bộ nhớ đồ họa.
 * Cập nhật liên tục theo chu kỳ thời gian thực (~500ms - 1000ms).
 
-### 2. 🌀 Điều khiển quạt bo mạch chủ qua SpeedFan Engine
-* Tích hợp engine **SpeedFan** giúp dễ dàng tương thích và hỗ trợ nhiều loại chip quản lý I/O (SuperIO) trên nhiều bo mạch chủ khác nhau.
+### 2. 🌀 Điều khiển quạt bo mạch chủ & Nhận diện Chip ĐỘNG (Dynamic Detection)
+* **Nhận diện phần cứng động 100%:** Tự động phát hiện chính xác model chip SuperIO và tên bo mạch chủ của từng máy trong cài đặt (không hardcode ITE8772).
+* **Tương thích rộng rãi:** Hỗ trợ đa dạng các dòng bo mạch chủ phổ biến (Intel X79, X99, Z390, Z490, Z690, Z790, AMD B450, B550, X570, B650, AM5...).
 * **Tự động nhận diện quạt thực tế**: Chỉ hiển thị các cổng quạt đang có quạt cắm và hoạt động (**RPM > 0**).
 * Điều chỉnh công suất xung quạt từ **0% đến 100%**.
 * Khôi phục quyền điều khiển mặc định khi thoát phần mềm.
+
+
 
 ### 3. 📈 Tùy chỉnh đường cong quạt thông minh (Fan Curve Editor)
 * Tự do chỉnh sửa các mốc nhiệt độ (°C) $\to$ tốc độ quạt (%).
@@ -150,7 +153,7 @@ Nếu bạn thích Project này và thấy nó hữu ích, bạn có thể ủng
 ## 📖 Overview
 **MI50 Fan Control** is a dedicated external hardware fan controller and telemetry monitoring software designed specifically for **AMD Radeon Instinct MI50** graphics accelerators (including those flashed with modded **Radeon PRO VII 16GB** BIOS).
 
-The application integrates a background **SpeedFan** engine to manage and adjust motherboard fan headers (PWM), **enabling broad and seamless compatibility with various SuperIO hardware controller chips across a wide range of motherboards**. This is combined with direct native AMD driver telemetry to monitor essential real-time hardware statistics (GPU Core Temperature, GPU HotSpot Temperature, GPU Engine Clock, and VRAM memory information).
+Starting with **v3.0**, the application features **100% Dynamic SuperIO Chip Identification** (ITE IT86xx/IT87xx, Nuvoton NCT679x/NCT668x/NCT677x, Fintek, Winbond, EC) and motherboard detection tailored to each individual computer instead of using static hardcoded chip names. Combined with direct LPC probing and the background **SpeedFan** hardware engine, it seamlessly manages and adjusts motherboard fan headers (PWM) from 0% to 100%. This is combined with direct native AMD driver telemetry to monitor essential real-time hardware statistics (GPU Core Temperature, GPU HotSpot Temperature, GPU Engine Clock, and VRAM memory information).
 
 ---
 
@@ -164,11 +167,14 @@ The application integrates a background **SpeedFan** engine to manage and adjust
   * **GPU VRAM:** Video memory telemetry.
 * Real-time polling cycle (~500ms - 1000ms).
 
-### 2. 🌀 Motherboard Fan Speed Control via SpeedFan Engine
-* Built-in **SpeedFan** engine integration provides broad compatibility across various SuperIO hardware controller chipsets on multiple motherboard models.
+### 2. 🌀 Motherboard Fan Speed Control & Dynamic Chip Detection
+* **100% Dynamic Hardware Detection**: Automatically identifies and displays the exact SuperIO chip model and motherboard name for each machine in Settings (no static ITE8772 hardcoding).
+* **Broad Compatibility**: Supports popular enthusiast, workstation, and server motherboards (Intel X79, X99, Z390, Z490, Z690, Z790, AMD B450, B550, X570, B650, AM5...).
 * **Active Fan Detection**: Filters and displays only fan headers with physical fans spinning (**Live RPM > 0**).
 * Full range hardware PWM speed adjustment from **0% to 100%**.
 * Restores default hardware fan profiles upon application exit.
+
+
 
 ### 3. 📈 Intelligent Fan Curve Editor
 * Multi-point temperature-to-speed curve mapping.

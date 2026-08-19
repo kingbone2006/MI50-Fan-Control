@@ -36,7 +36,8 @@
                 <TextBlock Text="{loc:Loc UpdateDialogHeader}" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
                 <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                     <TextBlock Text="Phiên bản hiện tại: " Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"/>
-                    <TextBlock Text="v2.0" Foreground="#94A3B8" FontWeight="SemiBold" FontSize="12" Margin="0,0,12,0"/>
+                    <TextBlock Text="v3.0" Foreground="#94A3B8" FontWeight="SemiBold" FontSize="12" Margin="0,0,12,0"/>
+
                     <TextBlock Text="➔ Mới nhất: " Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"/>
                     <TextBlock x:Name="NewVersionText" Text="v2.1" Foreground="#38BDF8" FontWeight="Bold" FontSize="12"/>
                 </StackPanel>

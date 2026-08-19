@@ -316,6 +316,8 @@ namespace MI50FanControl.Services
             }
 
             var fanConfigs = _settingsService.Current.FanConfigs;
+            float maxAppliedPwm = globalPwm;
+            bool hasCustomOverride = false;
 
             foreach (var fan in _superIoManager.ActiveFans)
             {
@@ -324,14 +326,10 @@ namespace MI50FanControl.Services
                 float targetPwm = globalPwm;
                 if (cfg != null)
                 {
-                    if (cfg.Mode == FanControlMode.BiosDefault)
-                    {
-                        // Giữ nguyên BIOS Default, không can thiệp đè PWM
-                        continue;
-                    }
-                    else if (cfg.Mode == FanControlMode.FixedManual)
+                    if (cfg.Mode == FanControlMode.FixedManual)
                     {
                         targetPwm = cfg.FixedSpeedPercent;
+                        hasCustomOverride = true;
                     }
                     else
                     {
@@ -341,8 +339,13 @@ namespace MI50FanControl.Services
                     targetPwm = Math.Clamp(targetPwm, cfg.MinSafePwmPercent, cfg.MaxSafePwmPercent);
                 }
 
-                _superIoManager.SetFanSpeed(fan.Id, targetPwm);
+                fan.CurrentPwmPercent = targetPwm;
+                maxAppliedPwm = Math.Max(maxAppliedPwm, targetPwm);
             }
+
+            // Always dispatch speed to all motherboard fan headers so all connected fans speed up!
+            float dispatchSpeed = hasCustomOverride ? maxAppliedPwm : globalPwm;
+            _superIoManager.SetAllFansSpeed(dispatchSpeed);
         }
 
         public void Dispose()

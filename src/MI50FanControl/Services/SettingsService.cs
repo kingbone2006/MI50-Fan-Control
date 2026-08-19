@@ -60,6 +60,16 @@ namespace MI50FanControl.Services
             {
                 Current.FanConfigs = new();
             }
+
+            // Ensure any fans default to FollowCurve so all connected fans respond to the temperature curve
+            foreach (var cfg in Current.FanConfigs)
+            {
+                if (cfg.Mode == FanControlMode.BiosDefault)
+                {
+                    cfg.Mode = FanControlMode.FollowCurve;
+                }
+            }
+
             if (AutoStartService.IsAutoStartEnabled())
             {
                 Current.StartWithWindows = true;

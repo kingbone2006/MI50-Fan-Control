@@ -530,6 +530,8 @@ namespace MI50FanControl.Hardware
                                 SendMessage(child, WM_SETTEXT, IntPtr.Zero, percent.ToString());
                                 IntPtr wParam = (IntPtr)((EN_CHANGE << 16) | (child.ToInt32() & 0xFFFF));
                                 SendMessage(hWnd, WM_COMMAND, wParam, child);
+                                SendMessage(child, WM_KEYDOWN, (IntPtr)VK_RETURN, IntPtr.Zero);
+                                SendMessage(child, WM_KEYUP, (IntPtr)VK_RETURN, IntPtr.Zero);
                             }
                             currentEditIdx++;
                         }
